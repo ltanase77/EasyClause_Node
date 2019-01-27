@@ -1,0 +1,130 @@
+html {
+    height: 100%;
+}
+
+body {
+    position: relative;
+    min-height: 100%;
+    min-width: 30%;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-bottom: 50px;
+    font-family: "Artifika", serif;
+    font-size: 12px;
+    color: #00188f;
+}
+
+.page-header {
+    margin: 20px 0 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.page-header h1 {
+    font-size: 20px;
+    text-align: center;
+    padding-bottom: 10px;
+    color: #00188f;
+    text-shadow: 2px 2px 4px rgba(0, 0, 128, 0.5);
+}
+
+div {
+    margin-bottom: 10px; }
+
+
+.lang {
+    width: 90%;
+    margin: 0 auto;
+    display: block;
+    overflow: auto;
+}
+
+.lang h2 {
+    font-size: 18px;
+    text-align: center;
+    padding: 10px 0;
+    color: #00188f;
+}
+
+.lang div {
+    display: flex;
+    padding: 2%;
+    width: 90%;
+    margin: 0 auto;
+    /*overflow: auto;*/
+}
+
+.lang .btn-lang {
+    flex: 1;
+    margin-right: 1px;
+    padding: 4px 0;
+    border-radius: 5px 10px;
+    border: 1px solid rebeccapurple;
+    font-family: "Artifika", serif;
+    background-color: #faf1fc;
+    color: #00188f;
+    cursor: pointer;
+}
+
+.lang .btn-lang:hover {
+    color: white;
+    background-color: #0078d7;
+}
+
+.jum {
+    text-align: center;
+    padding: 10px 0;
+    background-color: ghostwhite;
+    margin-top: 10px;
+    border: 1px solid #dfd1ef;
+    border-radius: 10px 10px;
+}
+.jum p {
+    color: #5c005c;
+}
+
+.intro {
+    line-height: 15px;
+}
+
+#clause-panel {
+    padding: 0.30rem;
+}
+
+.editbar {
+    border-bottom: 0.5px solid navy;
+    border-top: 0.5px solid navy;
+    background-color: ghostwhite;
+}
+.editbar i {
+    color: black;
+    margin-right: 0.3rem;
+    font-size: 1rem;
+}
+
+.text {
+    margin-bottom: 0.30rem;
+}
+
+.footer {
+    margin-left: -1em;
+    margin-right: -1em;
+    margin-bottom: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /*margin-top: 2em;*/
+    /*color: white;*/
+}
+
+.footer ul {
+    list-style-type: none;
+    padding: 0.5em;
+    text-align: center;
+    margin-bottom: 0;
+}
+.footer li {
+    font-size: 0.9em;
+    display: inline-block;
+    padding-right: 0.5em;
+}

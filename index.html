@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VueAppTest</title>
+    <link href="https://fonts.googleapis.com/css?family=Artifika" rel="stylesheet" />
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/base.css">
+    <script src="vue.js"></script>
+</head>
+<body >
+<div id="app">
+<nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="https://www.easyconsult.ro">
+        <img src="img/icon_32.png" width="31" height="32" class="d-inline-block align-top" alt="logo">
+        Easy Consult
+    </a>
+    <div class="collapse navbar-collapse d-flex justify-content-center" id="navbarNav" >
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-question-circle"></i> Support</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main>
+    <!-- Main Content -->
+    <div class="intro">
+        <div class="page-header">
+            <h1 class="text-center">{{welcomeText}}</h1>
+        </div>
+        <div class="lang">
+            <h2>{{langText}}</h2>
+            <div>
+                <button type="button" class="btn-lang" v-on:click="changeEN">{{langBtnText[0]}}</button>
+                <button  type="button" class="btn-lang" v-on:click="changeRO">{{langBtnText[1]}}</button>
+            </div>
+        </div>
+        <div class="jum">
+            <p class="intro">{{introText}}</p>
+        </div>
+        <select class="form-control" v-on:change="displayButtons" v-if="showEN">
+            <option>Select Clause</option>
+            <option v-for="clause in clausesEN" v-bind:value="clause.typeValue">{{clause.type}}</option>
+        </select>
+        <select class="form-control" v-on:change="displayButtons" v-if="showRO">
+            <option>Selectați Clauza</option>
+            <option v-for="clause in clausesRO" v-bind:value="clause.typeValue">{{clause.type}}</option>
+        </select>
+    </div>
+
+    <div class="EN" v-if="showEN">
+        <div class="buttons">
+            <section v-for="clause in clausesEN" class="card" v-bind:data-clause-type="clause.typeValue" v-show="showButtons[clause.typeValue]">
+                <div class="card-body">
+                    <p class="card-text">Choose one of the {{clause.typeValue.toLowerCase()}} clauses:</p>
+                    <div class="row">
+                        <button
+                                v-for="item in clause.clauses"
+                                v-bind:data-clause="item.name" class="btn btn-outline-dark btn-sm col-6"
+                                v-on:click="insertClause">
+                                {{item.value}}
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="RO" v-if="showRO">
+        <div class="buttons">
+            <section v-for="clause in clausesRO" class="card" v-bind:data-clause-type="clause.typeValue" v-show="showButtons[clause.typeValue]">
+                <div class="card-body">
+                    <p class="card-text">Alegeți una dintre următoarele clauze de {{clause.typeValue.toLowerCase()}}</p>
+                    <div class="row">
+                        <button
+                            v-for="item in clause.clauses"
+                            v-bind:data-clause="item.name" class="btn btn-outline-dark btn-sm col-6"
+                            v-on:click="insertClause">
+                            {{item.value}}</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{cardTitle}} <span class="clause-title"></span></h5>
+            <div class="editor">
+                <!--<i class="far fa-edit"> Edit</i><i class="far fa-save"> Save</i><i class="far fa-copy"> Copy</i>-->
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Footer -->
+<div class="footer">
+    <ul>
+        <li class="first">&copy; <span></span> Easy Consult </li>
+        <li class="second"> || </li>
+        <li class="third"> Developed by: Lucian Tanase</li>
+    </ul>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="app.js"></script>
+<script>
+    const toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+        [{ 'direction': 'rtl' }],                         // text direction
+
+        [{ 'color': [] }],          // dropdown with defaults from theme
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+
+        ['clean']                                         // remove formatting button
+    ];
+    const quill = new Quill('.editor', {
+        modules: {
+            toolbar: toolbarOptions,
+            history: {
+                delay: 1000,
+                maxStack: 500,
+                userOnly: true
+            }
+        },
+        theme: 'snow'
+    });
+</script>
+<!--<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+</body>
+</html>
