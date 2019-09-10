@@ -15,22 +15,22 @@ new Vue({
             limitation: false,
             liability: false,
             miscellanous: false,
-            representations: false,
+            representations: false
         }
-
-
     },
     created() {
         const vm = this;
-        fetch('json/clauses_type.json').then(function(response) {
-            let result = response.json();
-            result.then(function(obj) {
-                vm.clausesEN = obj.EN;
-                vm.clausesRO = obj.RO;
+        fetch("https://easy-clause.firebaseio.com/clauses-type.json")
+            .then(function(response) {
+                const result = response.json();
+                result.then(function(obj) {
+                    vm.clausesEN = obj.EN;
+                    vm.clausesRO = obj.RO;
+                });
+            })
+            .catch(function(error) {
+                this.fetchError = error.message;
             });
-        }).catch(function(error) {
-            this.fetchError = error.message;
-        });
     },
 
     computed: {
@@ -73,7 +73,7 @@ new Vue({
             if (this.showRO) {
                 return "Clauză:";
             }
-        }
+        },
     },
     methods: {
         changeEN: function(event) {
@@ -86,8 +86,8 @@ new Vue({
         },
 
         displayButtons: function(event) {
-            let type = event.target.value;
-            for (let item in this.showButtons) {
+            const type = event.target.value;
+            for (const item in this.showButtons) {
                 if (item === type) {
                     this.showButtons[type] = true;
                 } else {
@@ -97,28 +97,31 @@ new Vue({
         },
 
         getData: function() {
-            return fetch('json/clauses_array.json').then(function(response) {
-                return response.json();
-            }).catch(function(error) {
-                return error.message;
-            });
+            return fetch("https://easy-clause.firebaseio.com/clauses-content.json")
+                .then(function(response) {
+                    return response.json();
+                })
+                .catch(function(error) {
+                    return error.message;
+                });
         },
 
         insertClause: function(event) {
-            const clauseLabel = event.target.getAttribute('data-clause');
-            this.getData().then(function(data) {
-                const clauseTitle =  document.querySelector('.clause-title');
-                clauseTitle.textContent = event.target.textContent;
-                const clauseBox = document.querySelector('.ql-editor');
-                clauseBox.textContent = '';
-                data[clauseLabel].forEach(function(elem) {
-                    clauseBox.innerHTML += `<p class="text">${elem}</p>`;
+            const clauseLabel = event.target.getAttribute("data-clause");
+            this.getData()
+                .then(function(data) {
+                    const clauseTitle = document.querySelector(".clause-title");
+                    clauseTitle.classList.add("animated", "slideInRight");
+                    clauseTitle.textContent = event.target.textContent;
+                    const clauseBox = document.querySelector(".ql-editor");
+                    clauseBox.textContent = "";
+                    data[clauseLabel].forEach(function(elem) {
+                        clauseBox.innerHTML += `<p class="text animated slideInDown">${elem}</p>`;
+                    });
                 })
-
-            }).catch(function(error) {
-                document.querySelector('.ql-editor').textContent = error;
-            });
-        }
-    }
+                .catch(function(error) {
+                    document.querySelector(".ql-editor").textContent = error;
+                });
+        },
+    },
 });
-
