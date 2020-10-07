@@ -36,7 +36,7 @@ export default {
         const userString = localStorage.getItem("user");
         const userData = JSON.parse(userString);
         if (userString && userData.token) {
-            if (new Date(userData.expiresOn) > new Date()) {
+            if (userData.expiresOn > Date.now()) {
                 this.$store.commit("auth/USER_IS_AUTH", userData);
             } else {
                 this.$store.dispatch("auth/logout");

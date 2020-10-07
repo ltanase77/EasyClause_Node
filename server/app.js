@@ -5,10 +5,7 @@ const app = express();
 app.get("/", (req, res, next) => {
     const options = {
         //root: path.join(__dirname, "/client/dist/"),
-        root: path.join(
-            path.dirname(process.mainModule.filename),
-            "client/dist"
-        ),
+        root: path.join(path.dirname(require.main.filename), "client/dist"),
     };
     res.sendFile("index.html", options);
 });
@@ -19,7 +16,7 @@ app.get("/500", (req, res, next) => {
 
 app.use(
     express.static(
-        path.join(path.dirname(process.mainModule.filename), "/client/dist")
+        path.join(path.dirname(require.main.filename), "/client/dist")
     )
 );
 

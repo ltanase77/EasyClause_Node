@@ -1,5 +1,21 @@
 import router from "../../router/index";
 import { setToastContent } from "./../../util";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
+
+const firebaseConfig = {
+    apiKey: process.env.VUE_APP_API_KEY,
+    authDomain: process.env.VUE_APP_AUTH_DOMAIN,
+    databaseURL: process.env.VUE_APP_DATABASE_URL,
+    projectId: process.env.VUE_APP_PROJECT_ID,
+    storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
+    appId: process.env.VUE_APP_ID,
+    measurementId: process.env.VUE_APP_MEASUREMENT_ID
+};
+firebase.initializeApp(firebaseConfig);
+
 export default {
     state: {
         user: {
@@ -39,64 +55,52 @@ export default {
 
     actions: {
         login({ commit, state }, userData) {
-            const url =
-                "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAka-1fptQxuOPxwtTvWS7Qow4WpJ0ec7o";
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: userData.email,
-                    password: userData.password,
-                    returnSecureToken: true
-                })
-            })
+            firebase
+                .auth()
+                .signInWithEmailAndPassword(userData.email, userData.password)
                 .then(response => {
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.error) {
-                        console.log(data.error);
-                        const error = {
-                            status: true,
-                            title: state.EN
-                                ? "An error has ocurred"
-                                : "A aparut o erorare",
-                            message: data.error.message
+                    response.user.getIdToken().then(idToken => {
+                        const user = {
+                            userId: response.user.uid,
+                            email: response.user.email,
+                            token: idToken,
+                            refreshToken: response.user.refreshToken,
+                            expiresOn: Date.now() + 3600 * 1000
                         };
-                        return commit("home/SET_TOAST", error, { root: true });
-                    }
-                    const user = {
-                        userId: data.localId,
-                        email: data.email,
-                        token: data.idToken,
-                        refreshToken: data.refreshToken,
-                        expiresOn: new Date(
-                            new Date().getTime() + data.expiresIn * 1000
-                        )
-                    };
-                    fetch(
-                        `https://easy-clause.firebaseio.com/users/${user.userId}.json?auth=${user.token}`
-                    )
-                        .then(function(response) {
-                            return response.json();
-                        })
-                        .then(result => {
-                            user.name = result.name;
-                            user.favorites = result.favorites || [];
-                            const toast = setToastContent("info", state.EN, [
-                                "You are now login!",
-                                "Acum ești logat!"
-                            ]);
-                            commit("home/SET_TOAST", toast, { root: true });
-                            commit("USER_IS_AUTH", user);
-                            localStorage.setItem("user", JSON.stringify(user));
-                            router.push({ path: "account" });
-                        });
+
+                        firebase
+                            .database()
+                            .ref("/users/" + user.userId)
+                            .once("value")
+                            .then(function(snapshot) {
+                                const data = snapshot.val();
+                                user.name = data.name;
+                                user.favorites = data.favorites || [];
+                                const toast = setToastContent(
+                                    "info",
+                                    state.EN,
+                                    ["You are now login!", "Acum ești logat!"]
+                                );
+                                commit("home/SET_TOAST", toast, { root: true });
+                                commit("USER_IS_AUTH", user);
+                                localStorage.setItem(
+                                    "user",
+                                    JSON.stringify(user)
+                                );
+                                router.push({ path: "account" });
+                            });
+                    });
                 })
                 .catch(err => {
                     console.log(err);
+                    const error = {
+                        status: true,
+                        title: state.EN
+                            ? "An error has ocurred"
+                            : "A aparut o erorare",
+                        message: err.message
+                    };
+                    return commit("home/SET_TOAST", error, { root: true });
                 });
         },
 

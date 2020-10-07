@@ -164,9 +164,11 @@ export default {
 
     methods: {
         logoutHandler() {
-            this.$store.dispatch("auth/logout").then(() => {
+            this.$store.dispatch(
+                "auth/logout"
+            ) /* .then(() => {
                 this.$router.push({ name: "home" });
-            });
+            }) */;
         }
     }
 };
