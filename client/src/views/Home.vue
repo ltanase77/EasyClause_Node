@@ -87,22 +87,31 @@ export default {
         if (this.getClauses.EN.length === 0) {
             this.$store.dispatch("home/fetchClausesType");
         }
-        if (Object.keys(this.getClausesContent).length === 0) {
+        /* if (Object.keys(this.getClausesContent).length === 0) {
             this.$store.dispatch("home/fetchClausesContent");
-        }
+        } */
     },
 
     methods: {
         insertClause(clause) {
             const clauseBox = document.querySelector(".ql-editor");
             clauseBox.textContent = "";
-            const clauses = this.getClausesContent;
-            clauses[clause.label].forEach(paragraph => {
-                clauseBox.innerHTML += `<p class="text animated slideInDown">${paragraph}</p>`;
-            });
-            const elem = document.querySelector(".editor-title");
-            elem.setAttribute("data-clause", clause.label);
-            elem.setAttribute("data-value", clause.value);
+            /* const clauses = this.getClausesContent;
+            const clauseContent = clauses.filter(
+                item => item.name === clause.label
+            ); */
+            this.$store
+                .dispatch("home/fetchClausesContent", clause)
+                .then(response => {
+                    //console.log(response);
+                    response.content.forEach(paragraph => {
+                        clauseBox.innerHTML += `<p class="text animated slideInDown">${paragraph}</p>`;
+                    });
+                    const elem = document.querySelector(".editor-title");
+                    elem.setAttribute("data-clause", clause.label);
+                    elem.setAttribute("data-value", clause.value);
+                });
+            //console.log(clauseContent);
         }
     }
 };

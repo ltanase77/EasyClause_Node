@@ -1,24 +1,25 @@
 {
-  "name": "easyclause",
-  "version": "1.0.0",
-  "description": "server side easyclause app",
-  "main": "server.js",
-  "scripts": {
-    "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ltanase77/EasyPanel_Vue.git"
-  },
-  "author": "office@easyconsult.ro",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ltanase77/EasyPanel_Vue/issues"
-  },
-  "homepage": "https://github.com/ltanase77/EasyPanel_Vue#readme",
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1"
-  }
+    "name": "easyclause",
+    "version": "1.0.0",
+    "description": "server side easyclause app",
+    "main": "server.js",
+    "scripts": {
+        "start": "nodemon server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ltanase77/EasyPanel_Vue.git"
+    },
+    "author": "office@easyconsult.ro",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ltanase77/EasyPanel_Vue/issues"
+    },
+    "homepage": "https://github.com/ltanase77/EasyPanel_Vue#readme",
+    "dependencies": {
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "mongoose": "^5.10.8"
+    }
 }

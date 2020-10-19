@@ -2,7 +2,7 @@ const app = require("./server/app");
 const config = require("./server/config");
 //require("./server/db");
 
-const port = config.port || 3000;
-const server = app.listen(port);
+const port = config.PORT || 3000;
+app.listen(port);
 
-console.log(`The server is running on port: ${port} in ${config.env} mode`);
+console.log(`The server is running on port: ${port} in ${config.ENV} mode`);

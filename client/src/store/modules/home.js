@@ -10,7 +10,7 @@ export default {
         },
         clausesEN: [],
         clausesRO: [],
-        clausesContent: {},
+        clausesContent: [],
         showButtons: {
             arbitration: false,
             confidentiality: false,
@@ -64,8 +64,8 @@ export default {
             state.toast.title = payload.title;
         },
         SET_CLAUSES_TYPE(state, clausesType) {
-            state.clausesEN = clausesType.EN;
-            state.clausesRO = clausesType.RO;
+            state.clausesEN = clausesType[0].EN;
+            state.clausesRO = clausesType[1].RO;
         },
         SET_CLAUSES_CONTENT(state, payload) {
             state.clausesContent = payload;
@@ -95,13 +95,14 @@ export default {
 
     actions: {
         fetchClausesType({ commit, state }) {
-            fetch("https://easy-clause.firebaseio.com/clauses-type.json")
+            fetch(
+                "http://localhost:3000/types" /*"https://easy-clause.firebaseio.com/clauses-type.json"*/
+            )
                 .then(function(response) {
-                    // console.log(response.data);
                     return response.json();
                 })
                 .then(function(result) {
-                    //console.log(result);
+                    console.log(result);
                     if (result.error) {
                         const error = setToastContent("error", state.EN, [
                             "We are sorry! We cannot initialize the app!",
@@ -116,8 +117,11 @@ export default {
                 });
         },
 
-        fetchClausesContent({ commit, state }) {
-            fetch("https://easy-clause.firebaseio.com/clauses-content.json")
+        fetchClausesContent({ commit, state }, payload) {
+            return fetch(
+                "http://localhost:3000/clauses/" +
+                    payload.label /*"https://easy-clause.firebaseio.com/clauses-content.json"*/
+            )
                 .then(function(response) {
                     return response.json();
                 })
@@ -129,7 +133,9 @@ export default {
                         ]);
                         return commit("SET_TOAST", error);
                     }
-                    commit("SET_CLAUSES_CONTENT", result);
+                    //commit("SET_CLAUSES_CONTENT", result);
+                    //console.log(result);
+                    return result;
                 })
                 .catch(function(error) {
                     console.log(error);
