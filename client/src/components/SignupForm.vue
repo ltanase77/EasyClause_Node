@@ -231,9 +231,7 @@ export default {
                 password: this.password,
                 favorites: []
             };
-            this.$store.dispatch("auth/signup", userData).then(() => {
-                this.$router.push({ name: "account" });
-            });
+            this.$store.dispatch("auth/signup", userData);
         }
     }
 };

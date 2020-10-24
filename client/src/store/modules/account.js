@@ -1,4 +1,4 @@
-import { setToastContent } from "./../../util";
+import { setToastContent, firebaseInstance } from "../../utils/util";
 export default {
     actions: {
         addToFavorite({ commit, rootState }, choice) {
@@ -24,31 +24,11 @@ export default {
                 }
                 user.favorites.push(choice);
                 localStorage.setItem("user", JSON.stringify(user));
-                return fetch(
-                    `https://easy-clause.firebaseio.com/users/${rootState.auth.user.userId}.json?auth=${rootState.auth.user.token}`,
-                    {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ favorites: user.favorites })
-                    }
-                )
-                    .then(response => {
-                        return response.json();
-                    })
-                    .then(result => {
-                        if (result.error) {
-                            const error = setToastContent(
-                                "error",
-                                rootState.EN,
-                                [
-                                    "We are sorry! We cannot save the clause to your favorite!",
-                                    "Ne pare rău! Nu am putut salva clauza în lista de favorite!"
-                                ]
-                            );
-                            commit("home/SET_TOAST", error, { root: true });
-                        }
+                firebaseInstance
+                    .database()
+                    .ref("/users/" + user.userId)
+                    .update({ favorites: user.favorites })
+                    .then(() => {
                         const success = setToastContent(
                             "success",
                             rootState.home.EN,
@@ -60,9 +40,16 @@ export default {
                         commit("auth/SET_FAVORITES", user.favorites, {
                             root: true
                         });
-                        return commit("home/SET_TOAST", success, {
+                        commit("home/SET_TOAST", success, {
                             root: true
                         });
+                    })
+                    .catch(err => {
+                        const error = setToastContent("error", rootState.EN, [
+                            "We are sorry! We cannot save the clause to your favorite!",
+                            "Ne pare rău! Nu am putut salva clauza în lista de favorite!"
+                        ]);
+                        commit("home/SET_TOAST", error, { root: true });
                     });
             }
         },
@@ -82,31 +69,11 @@ export default {
             );
             user.favorites = newFavorites;
             localStorage.setItem("user", JSON.stringify(user));
-            fetch(
-                `https://easy-clause.firebaseio.com/users/${rootState.auth.user.userId}.json?auth=${rootState.auth.user.token}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ favorites: user.favorites })
-                }
-            )
-                .then(response => {
-                    return response.json();
-                })
-                .then(result => {
-                    if (result.error) {
-                        const error = setToastContent(
-                            "error",
-                            rootState.home.EN,
-                            [
-                                "We are sorry! We cannot delete the clause!",
-                                "Ne pare rău! Nu am putut șterge clauza!"
-                            ]
-                        );
-                        return commit("home/SET_TOAST", error, { root: true });
-                    }
+            firebaseInstance
+                .database()
+                .ref("/users/" + user.userId)
+                .update({ favorites: user.favorites })
+                .then(() => {
                     const success = setToastContent(
                         "success",
                         rootState.home.EN,
@@ -118,7 +85,14 @@ export default {
                     commit("auth/SET_FAVORITES", user.favorites, {
                         root: true
                     });
-                    return commit("home/SET_TOAST", success, { root: true });
+                    commit("home/SET_TOAST", success, { root: true });
+                })
+                .catch(err => {
+                    const error = setToastContent("error", rootState.home.EN, [
+                        "We are sorry! We cannot delete the clause!",
+                        "Ne pare rău! Nu am putut șterge clauza!"
+                    ]);
+                    commit("home/SET_TOAST", error, { root: true });
                 });
         }
     }

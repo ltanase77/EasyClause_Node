@@ -1,20 +1,5 @@
 import router from "../../router/index";
-import { setToastContent } from "./../../util";
-import * as firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/database";
-
-const firebaseConfig = {
-    apiKey: process.env.VUE_APP_API_KEY,
-    authDomain: process.env.VUE_APP_AUTH_DOMAIN,
-    databaseURL: process.env.VUE_APP_DATABASE_URL,
-    projectId: process.env.VUE_APP_PROJECT_ID,
-    storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
-    appId: process.env.VUE_APP_ID,
-    measurementId: process.env.VUE_APP_MEASUREMENT_ID
-};
-firebase.initializeApp(firebaseConfig);
+import { setToastContent, firebaseInstance } from "../../utils/util";
 
 export default {
     state: {
@@ -55,7 +40,7 @@ export default {
 
     actions: {
         login({ commit, state }, userData) {
-            firebase
+            firebaseInstance
                 .auth()
                 .signInWithEmailAndPassword(userData.email, userData.password)
                 .then(response => {
@@ -68,7 +53,7 @@ export default {
                             expiresOn: Date.now() + 3600 * 1000
                         };
 
-                        firebase
+                        firebaseInstance
                             .database()
                             .ref("/users/" + user.userId)
                             .once("value")
@@ -116,90 +101,49 @@ export default {
         },
 
         signup({ commit, state }, userData) {
-            const url =
-                "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAka-1fptQxuOPxwtTvWS7Qow4WpJ0ec7o";
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: userData.email,
-                    password: userData.password,
-                    returnSecureToken: true
-                })
-            })
+            firebaseInstance
+                .auth()
+                .createUserWithEmailAndPassword(
+                    userData.email,
+                    userData.password
+                )
                 .then(response => {
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.error) {
-                        console.log(data.error);
-                        const error = {
-                            status: true,
-                            title: state.EN
-                                ? "An error has ocurred"
-                                : "A aparut o erorare",
-                            message: data.error.message
-                        };
-                        return commit("home/SET_TOAST", error, { root: true });
-                    }
-                    console.log(data);
-                    const user = {
-                        userId: data.localId,
-                        email: data.email,
+                    const user = firebase.auth().currentUser;
+                    //console.log(user);
+                    const userInfo = {
+                        userId: user.uid,
+                        email: user.email,
                         name: userData.name,
-                        token: data.idToken,
-                        refreshToken: data.refreshToken,
-                        expiresIn: data.expiresIn
+                        isAdmin: false
                     };
-                    fetch(
-                        `https://easy-clause.firebaseio.com/users/${user.userId}.json?auth=${data.idToken}`,
-                        {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(userData)
-                        }
-                    )
-                        .then(response => {
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log(data);
-                            if (data.error) {
-                                console.log(data.error);
-                                const error = {
-                                    status: true,
-                                    title: state.EN
-                                        ? "Registration Failed"
-                                        : "Înegistrare eșuată",
-                                    message: data.error.message
-                                };
-                                return commit("home/SET_TOAST", error, {
-                                    root: true
-                                });
-                            }
-                            const toast = {
-                                status: true,
-                                title: state.EN
-                                    ? "Registration"
-                                    : "Înregistrare",
-                                message: state.EN
-                                    ? "You have been succesfully registered!"
-                                    : "Ai fost înregistrat cu success!"
-                            };
-                            commit("home/SET_TOAST", toast, { root: true });
-                            commit("USER_IS_AUTH", user);
+                    firebaseInstance
+                        .database()
+                        .ref("/users/" + userInfo.userId)
+                        .set(userInfo)
+                        .then(() => {
+                            user.sendEmailVerification().then(() => {
+                                const toast = setToastContent(
+                                    "info",
+                                    state.EN,
+                                    [
+                                        "You have been registered! You will receive an e-mail for activating your account",
+                                        "Ai fost înregistrat! Vei primi un e-mail pentru activarea contului"
+                                    ]
+                                );
+                                commit("home/SET_TOAST", toast, { root: true });
+                            });
                         });
                 })
                 .catch(err => {
-                    this.isError = true;
-                    //console.log(err.message);
-                    if (err.message === "EMAIL_EXISTS") {
-                        this.errorType = "EMAIL_EXISTS";
-                    }
+                    console.log(err);
+                    const error = {
+                        status: true,
+                        title: state.EN
+                            ? "An error has ocurred"
+                            : "A aparut o erorare",
+                        message: err.message
+                    };
+                    return commit("home/SET_TOAST", error, { root: true });
                 });
         }
     }

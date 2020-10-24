@@ -1,4 +1,4 @@
-import { setToastContent } from "./../../util";
+import { setToastContent } from "../../utils/util";
 export default {
     state: {
         EN: false,
