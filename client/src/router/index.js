@@ -50,6 +50,19 @@ const routes = [
             import(/* webpackChunkName: "account" */ "./../views/Account.vue")
     },
     {
+        path: "/admin",
+        name: "admin",
+        beforeEnter(to, from, next) {
+            if (store.state.auth.user.token && store.state.auth.user.isAdmin) {
+                next();
+            } else {
+                next("/");
+            }
+        },
+        component: () =>
+            import(/* webpackChunkName: "admin" */ "./views/Admin.vue")
+    },
+    {
         path: "/404",
         name: "404",
         component: () =>

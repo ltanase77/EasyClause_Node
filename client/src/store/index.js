@@ -19,6 +19,10 @@ export default new Vuex.Store({
         account: {
             namespaced: true,
             ...Account
+        },
+        admin: {
+            namespaced: true,
+            ...Admin
         }
     }
 });

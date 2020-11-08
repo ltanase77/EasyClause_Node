@@ -17,7 +17,11 @@ import {
     faUserCheck,
     faSignOutAlt,
     faUserCircle,
-    faTrashAlt
+    faTrashAlt,
+    faToolbox,
+    faPlus,
+    faMinusCircle,
+    faEdit
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 //import "jquery/dist/jquery.min.js";
@@ -43,7 +47,11 @@ library.add(
     faUserCheck,
     faSignOutAlt,
     faUserCircle,
-    faTrashAlt
+    faTrashAlt,
+    faToolbox,
+    faPlus,
+    faMinusCircle,
+    faEdit
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
