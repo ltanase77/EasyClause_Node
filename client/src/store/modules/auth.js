@@ -61,6 +61,7 @@ export default {
                                 const data = snapshot.val();
                                 user.name = data.name;
                                 user.favorites = data.favorites || [];
+                                user.isAdmin = data.isAdmin;
                                 const toast = setToastContent(
                                     "info",
                                     state.EN,

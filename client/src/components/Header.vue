@@ -101,6 +101,18 @@
                             {{ text.accountText }}
                         </a>
                     </router-link>
+                    <router-link
+                        v-show="isAdmin"
+                        class="nav-item"
+                        active-class="active"
+                        tag="li"
+                        to="/admin"
+                    >
+                        <a class="nav-link">
+                            <font-awesome-icon icon="toolbox" />
+                            Admin
+                        </a>
+                    </router-link>
                 </ul>
             </div>
         </nav>
@@ -129,6 +141,9 @@ export default {
             type: Boolean
         },
         showToast: {
+            type: Boolean
+        },
+        isAdmin: {
             type: Boolean
         }
     },

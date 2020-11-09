@@ -1,4 +1,4 @@
-import { setToastContent } from "./../../util";
+import { setToastContent} from "./../../utils/util";
 export default {
     state: {
         users: []
@@ -15,38 +15,36 @@ export default {
     },
     actions: {
         addCategory({ commit, rootState }, payload) {
-            const node = rootState.home.EN
-                ? rootState.home.clausesEN.length
-                : rootState.home.clausesRO.length;
-            const url = `https://easy-clause.firebaseio.com/clauses-type/${
-                rootState.home.EN ? "EN" : "RO"
-            }/${node}.json?auth=${rootState.auth.user.token}`;
-            const newType = {
-                clauses: {
-                    0: ""
-                },
-                type: payload.type,
-                typeValue: payload.identifier
-            };
+//const newType = `lang=${rootState.home.EN ? "EN" : "RO"}&clauses=[]&type=${payload.type}&value=${payload.identifier}`;
 
-            fetch(url, {
-                method: "PATCH",
+            const newType = {
+                lang: rootState.home.EN ? "EN" : "RO",
+                clauses: [],
+                type: payload.type,
+                value: payload.identifier
+            }
+
+            // We need to define new routes for updating the mongodb database
+            const url = "http://localhost:3000/add-type";
+            return fetch(url, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(newType)
+            }).then((response) => {
+                return response.json();
             })
-                .then(response => {
-                    return response.json();
-                })
-                .then(data => {
+            .then(data => {
                     console.log(data);
                     const toast = setToastContent("info", rootState.home.EN, [
                         "Category added!",
                         "Categorie adaugata!"
                     ]);
                     return commit("home/SET_TOAST", toast, { root: true });
-                });
+                }).catch((err) => {
+                    console.log(err);
+                })
         },
         removeCategory({ commit, rootState }, payload) {
             const types = rootState.home.EN

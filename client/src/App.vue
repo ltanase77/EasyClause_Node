@@ -4,6 +4,7 @@
             :showEN="getLanguage.EN"
             :showRO="getLanguage.RO"
             :isAuth="isAuth"
+            :isAdmin="getUser.isAdmin"
         />
         <app-toast
             :showToast="getToast.status"
@@ -30,13 +31,13 @@ export default {
     },
     computed: {
         ...mapGetters("home", ["getLanguage", "getToast"]),
-        ...mapGetters("auth", ["isAuth"])
+        ...mapGetters("auth", ["isAuth", "getUser"])
     },
     mounted() {
         const userString = localStorage.getItem("user");
         const userData = JSON.parse(userString);
         if (userString && userData.token) {
-            if (userData.expiresOn > Date.now()) {
+            if (new Date(userData.expiresOn) > Date.now()) {
                 this.$store.commit("auth/USER_IS_AUTH", userData);
             } else {
                 this.$store.dispatch("auth/logout");

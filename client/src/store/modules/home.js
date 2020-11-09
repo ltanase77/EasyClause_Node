@@ -64,8 +64,8 @@ export default {
             state.toast.title = payload.title;
         },
         SET_CLAUSES_TYPE(state, clausesType) {
-            state.clausesEN = clausesType[0].EN;
-            state.clausesRO = clausesType[1].RO;
+            state.clausesEN = clausesType[0].content;
+            state.clausesRO = clausesType[1].content;
         },
         SET_CLAUSES_CONTENT(state, payload) {
             state.clausesContent = payload;

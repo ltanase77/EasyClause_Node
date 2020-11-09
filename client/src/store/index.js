@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import Auth from "./modules/auth";
 import Home from "./modules/home";
 import Account from "./modules/account";
+import Admin from "./modules/admin";
 
 Vue.use(Vuex);
 

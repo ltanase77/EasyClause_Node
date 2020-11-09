@@ -60,7 +60,7 @@ const routes = [
             }
         },
         component: () =>
-            import(/* webpackChunkName: "admin" */ "./views/Admin.vue")
+            import(/* webpackChunkName: "admin" */ "./../views/Admin.vue")
     },
     {
         path: "/404",
