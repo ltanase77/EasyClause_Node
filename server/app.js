@@ -2,16 +2,17 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const path = require("path");
+const typesRoutes = require("./routes/types");
+const clausesRoutes = require("./routes/clauses");
+
 const app = express();
-require("./db");
-const Clauses = require("./models/Clauses");
-const Types = require("./models/Types");
 
 // Global middlewares
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Route to load the single page application
 app.get("/", (req, res, next) => {
     const options = {
         //root: path.join(__dirname, "/client/dist/"),
@@ -20,49 +21,16 @@ app.get("/", (req, res, next) => {
     res.sendFile("index.html", options);
 });
 
-app.get("/clauses/:label", (req, res, next) => {
-    const label = req.params.label;
-    Clauses.findOne({ name: label })
-        .then((clause) => {
-            res.status(200).json(clause);
-        })
-        .catch((err) => {
-            res.status(500).json({ error: err });
-            console.log(err);
-        });
-});
+// API routes
+app.use(typesRoutes);
+app.use(clausesRoutes);
 
-app.get("/types", (req, res, next) => {
-    Types.find()
-        .then((types) => {
-            res.status(200).json(types);
-        })
-        .catch((err) => {
-            res.status(500).json({ error: err });
-            console.log(err);
-        });
-});
-
-app.post("/add-type", (req, res, next) => {
-    const language = req.body.lang;
-    const type = req.body.type;
-    const value = req.body.value;
-    console.log(req.body.lang);
-    Types.updateOne({ lang: language }, { $push: {"content": { clauses: [], type: type, typeValue: value } }})
-        .then((result) => {
-            console.log(result);
-            res.status(200).json({"msg": "success"});
-        })
-        .catch((err) => {
-            res.status(500).json({ error: err });
-            console.log(err);
-        });
-});
-
+// General handling error middleware
 app.get("/500", (req, res, next) => {
     res.status(500).send("A aparut o eroare");
 });
 
+// Middleware for serving static files
 app.use(
     express.static(
         path.join(path.dirname(require.main.filename), "/client/dist")
