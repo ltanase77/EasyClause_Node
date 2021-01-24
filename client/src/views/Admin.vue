@@ -98,12 +98,15 @@
                                             />
                                         </span>
                                     </p>
-                                    <div class="text-justify mb-2">
-                                        {{
-                                            clause.content
-                                                ? clause.content.join()
-                                                : "Nicio clauza"
-                                        }}
+                                    <div class="text-justify mb-2 p-2 content">
+                                        <p
+                                            v-for="(paragraph,
+                                            index) in clause.content"
+                                            :key="index"
+                                            class="my-0"
+                                        >
+                                            {{ paragraph }}
+                                        </p>
                                     </div>
                                     <hr />
                                 </div>
@@ -127,18 +130,15 @@
 <script>
 import { mapGetters } from "vuex";
 import AddCatModal from "./../components/AddCatModal";
+import { getSVGTarget } from "./../utils/util";
 export default {
     name: "Admin",
     components: {
         addModal: AddCatModal
     },
     computed: {
-        ...mapGetters("home", [
-            "getLanguage",
-            "getClauses",
-            "getClausesContent"
-        ]),
-
+        ...mapGetters("home", ["getLanguage", "getClauses"]),
+        ...mapGetters("admin", ["getClausesContent"]),
         text: function() {
             if (this.getLanguage.EN) {
                 return {
@@ -191,11 +191,17 @@ export default {
             return result;
         }
     },
+    created() {
+        if (this.$store.state.admin.clausesContent.length === 0) {
+            this.$store.dispatch("admin/fetchClausesContent");
+        }
+    },
     methods: {
         removeCategory(event) {
-            const parent = event.target.parentNode.parentNode.parentNode;
-            const category = parent.getAttribute("data-category");
-            this.$store.dispatch("admin/removeCategory", { category });
+            const svg = getSVGTarget(event.target);
+            const parent = svg.parentNode.parentNode;
+            const type = parent.getAttribute("data-category");
+            this.$store.dispatch("admin/removeCategory", { type });
         },
         removeClause(event) {},
         editClause(event) {}

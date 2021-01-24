@@ -10,22 +10,8 @@ export default {
         },
         clausesEN: [],
         clausesRO: [],
-        clausesContent: [],
-        showButtons: {
-            arbitration: false,
-            confidentiality: false,
-            court: false,
-            indemnification: false,
-            ip: false,
-            limitation: false,
-            liability: false,
-            miscellanous: false,
-            representations: false,
-            force: false,
-            assignment: false,
-            termination: false,
-            favorites: false
-        }
+        clauseContent: {},
+        Buttons: {}
     },
 
     getters: {
@@ -35,8 +21,8 @@ export default {
                 RO: state.clausesRO
             };
         },
-        getClausesContent(state) {
-            return state.clausesContent;
+        getClauseContent(state) {
+            return state.clauseContent;
         },
         getLanguage(state) {
             return {
@@ -48,7 +34,7 @@ export default {
             return state.toast;
         },
         getButtons(state) {
-            return state.showButtons;
+            return state.Buttons;
         }
     },
 
@@ -67,8 +53,8 @@ export default {
             state.clausesEN = clausesType[0].content;
             state.clausesRO = clausesType[1].content;
         },
-        SET_CLAUSES_CONTENT(state, payload) {
-            state.clausesContent = payload;
+        SET_CLAUSE_CONTENT(state, payload) {
+            state.clauseContent = payload;
         },
 
         SET_LANGUAGE(state, payload) {
@@ -82,64 +68,85 @@ export default {
             }
         },
 
+        SET_BUTTONS(state, payload) {
+            state.Buttons = payload;
+        },
+
         DISPLAY_BUTTONS(state, value) {
-            for (const item in state.showButtons) {
+            for (const item in state.Buttons) {
                 if (item === value) {
-                    state.showButtons[value] = true;
+                    state.Buttons[value] = true;
                 } else {
-                    state.showButtons[item] = false;
+                    state.Buttons[item] = false;
                 }
+            }
+        },
+        ADD_CATEGORY(state, payload) {
+            payload.clauses = [];
+            if (state.EN) {
+                state.clausesEN.push(payload);
+            } else {
+                state.clausesRO.push(payload);
+            }
+        },
+
+        REMOVE_CATEGORY(state, index) {
+            if (state.EN) {
+                state.clausesEN.splice(index, 1);
+            } else {
+                state.clausesRO.splice(index, 1);
             }
         }
     },
 
     actions: {
-        fetchClausesType({ commit, state }) {
-            fetch(
-                "http://localhost:3000/types" /*"https://easy-clause.firebaseio.com/clauses-type.json"*/
-            )
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(result) {
-                    console.log(result);
-                    if (result.error) {
-                        const error = setToastContent("error", state.EN, [
-                            "We are sorry! We cannot initialize the app!",
-                            "Ne pare rău! Nu putem inițaliza aplicația!"
-                        ]);
-                        return commit("SET_TOAST", error);
-                    }
-                    commit("SET_CLAUSES_TYPE", result);
-                })
-                .catch(function(error) {
-                    console.log(error);
+        async fetchClausesType({ commit, state }) {
+            try {
+                const response = await fetch(
+                    "http://localhost:3000/types" /*"https://easy-clause.firebaseio.com/clauses-type.json"*/
+                );
+                if (response.status !== 200) {
+                    throw new Error();
+                }
+                const data = await response.json();
+                console.log(data);
+                const types = data[0].content.map(item => {
+                    return item.typeValue;
                 });
+                let buttons = {};
+                types.forEach(type => {
+                    buttons[type] = false;
+                });
+                buttons.favorites = false;
+                commit("SET_BUTTONS", buttons);
+                commit("SET_CLAUSES_TYPE", data);
+            } catch (err) {
+                const error = setToastContent("error", state.EN, [
+                    "We are sorry! We cannot initialize the app!",
+                    "Ne pare rău! Nu putem inițaliza aplicația!"
+                ]);
+                return commit("SET_TOAST", error);
+            }
         },
 
-        fetchClausesContent({ commit, state }, payload) {
-            return fetch(
-                "http://localhost:3000/clauses/" +
-                    payload.label /*"https://easy-clause.firebaseio.com/clauses-content.json"*/
-            )
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(result) {
-                    if (result.error) {
-                        const error = setToastContent("error", state.EN, [
-                            "We are sorry! We cannot initialize the app!",
-                            "Ne pare rău! Nu putem inițaliza aplicația!"
-                        ]);
-                        return commit("SET_TOAST", error);
-                    }
-                    //commit("SET_CLAUSES_CONTENT", result);
-                    //console.log(result);
-                    return result;
-                })
-                .catch(function(error) {
-                    console.log(error);
-                });
+        async fetchClauseContent({ commit, state }, payload) {
+            try {
+                const response = await fetch(
+                    `http://localhost:3000/clauses/${payload.label}`
+                );
+                if (response.status !== 200) {
+                    throw new Error();
+                }
+                const clause = await response.json();
+                commit("SET_CLAUSE_CONTENT", clause);
+                return clause;
+            } catch (err) {
+                const error = setToastContent("error", state.EN, [
+                    "We are sorry! We cannot get the requested content!",
+                    "Ne pare rău! Nu putem afisa continutul solicitat!"
+                ]);
+                return commit("SET_TOAST", error);
+            }
         }
     }
 };

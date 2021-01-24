@@ -15,7 +15,7 @@
         <app-clauses
             :showEN="getLanguage.EN"
             :showRO="getLanguage.RO"
-            :show-buttons="getButtons"
+            :buttons="getButtons"
             :clausesEN="getClauses.EN"
             :clausesRO="getClauses.RO"
             @insert="insertClause"
@@ -53,7 +53,7 @@ export default {
         ...mapGetters("home", [
             "getLanguage",
             "getClauses",
-            "getClausesContent",
+            "getClauseContent",
             "getButtons"
         ]),
         ...mapGetters("auth", ["isAuth"]),
@@ -101,7 +101,7 @@ export default {
                 item => item.name === clause.label
             ); */
             this.$store
-                .dispatch("home/fetchClausesContent", clause)
+                .dispatch("home/fetchClauseContent", clause)
                 .then(response => {
                     //console.log(response);
                     response.content.forEach(paragraph => {

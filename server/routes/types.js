@@ -6,12 +6,14 @@ const ctrl = require("./../controllers/typesCtrl");
 router.get("/types", ctrl.getAllTypes);
 
 // Route for adding a certain category of clauses
-router.post("/types/:category", ctrl.addType);
+router.post("/types", ctrl.addType);
+
+router.delete("/types", ctrl.deleteType);
 
 // Route for adding a clause to a certain category
-router.post("/types/:label", ctrl.addClause);
+router.post("/types/clause", ctrl.addClause);
 
 // Route for deleting a certain clause from the category
-router.delete("/types/:label", ctrl.deleteClause);
+router.delete("/types/clause", ctrl.deleteClause);
 
 module.exports = router;

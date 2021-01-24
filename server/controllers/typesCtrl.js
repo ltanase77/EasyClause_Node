@@ -23,10 +23,27 @@ exports.addType = (req, res, next) => {
     )
         .then((result) => {
             console.log(result);
-            res.status(200).json({ msg: "success" });
+            res.status(200).json({ msg: "Success" });
         })
         .catch((err) => {
-            res.status(500).json({ error: err });
+            res.status(500).json({ msg: "Fail", error: err });
+            console.log(err);
+        });
+};
+
+exports.deleteType = (req, res, next) => {
+    const language = req.body.lang;
+    const type = req.body.type;
+    Types.updateMany(
+        { lang: language },
+        { $pull: { content: { typeValue: type } } }
+    )
+        .then((result) => {
+            console.log(result);
+            res.status(200).json({ msg: "Success" });
+        })
+        .catch((err) => {
+            res.status(500).json({ msg: "Fail", error: err });
             console.log(err);
         });
 };

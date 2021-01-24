@@ -4,7 +4,7 @@
             <div class="buttons">
                 <section
                     v-for="(clause, index) in clausesEN"
-                    v-show="showButtons[clause.typeValue]"
+                    v-show="buttons[clause.typeValue]"
                     :key="index"
                     class="card"
                     :data-clause-type="clause.typeValue"
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                 </section>
-                <section v-show="showButtons.favorites">
+                <section v-show="buttons.favorites">
                     <div class="card-body">
                         <p class="card-text">Your favorites clauses</p>
                         <div class="row animated slideInUp">
@@ -49,7 +49,7 @@
             <div class="buttons">
                 <section
                     v-for="(clause, index) in clausesRO"
-                    v-show="showButtons[clause.typeValue]"
+                    v-show="buttons[clause.typeValue]"
                     :key="index"
                     class="card"
                     :data-clause-type="clause.typeValue"
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </section>
-                <section v-show="showButtons.favorites">
+                <section v-show="buttons.favorites">
                     <div class="card-body">
                         <p class="card-text">Clauzele tale favorite</p>
                         <div class="row animated slideInUp">
@@ -103,7 +103,7 @@ export default {
         showRO: {
             type: Boolean
         },
-        showButtons: {
+        buttons: {
             type: Object
         },
         clausesEN: {

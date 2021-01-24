@@ -38,3 +38,55 @@ export const setToastContent = (type, language, message) => {
         message: language ? message[0] : message[1]
     };
 };
+
+/* fontawesome icons are formed from an svg element and a path element
+and when clicked we need to determine which element is the event target */
+export const getSVGTarget = target => {
+    if (target.nodeName === "svg") {
+        return target;
+    }
+    return target.parentNode;
+};
+
+export const getRelevantIcons = (target, iconType) => {
+    let saveIcon,
+        content,
+        editIcon,
+        closeIcon,
+        removeIcon,
+        otherIcon = null;
+
+    switch (iconType) {
+        case "edit":
+            editIcon = target;
+            saveIcon = target.nextElementSibling;
+            closeIcon = saveIcon.nextElementSibling;
+            content = target.parentNode.parentNode.nextSibling;
+            break;
+        case "save":
+            saveIcon = target;
+            editIcon = target.previousElementSibling;
+            closeIcon = target.nextElementSibling;
+            content = target.parentNode.parentNode.nextSibling;
+            break;
+        case "close":
+            closeIcon = target;
+            saveIcon = target.previousElementSibling;
+            editIcon = saveIcon.previousElementSibling;
+            content = target.parentNode.parentNode.nextSibling;
+        case "remove":
+            removeIcon = target;
+            content = target.parentNode.parentNode.nextSibling;
+            break;
+        default:
+            otherIcon = target;
+    }
+    return {
+        editIcon,
+        saveIcon,
+        closeIcon,
+        removeIcon,
+        otherIcon,
+        content
+    };
+};

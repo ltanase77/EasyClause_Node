@@ -13,6 +13,15 @@ exports.getClause = (req, res, next) => {
         });
 };
 
-exports.getAllClauses = (req, res, next) => {};
+exports.getAllClauses = (req, res, next) => {
+    Clauses.find({})
+        .then((clauses) => {
+            res.status(200).json(clauses);
+        })
+        .catch((err) => {
+            res.status(500).json({ error: err });
+            console.log(err);
+        });
+};
 exports.postClause = (req, res, next) => {};
 exports.deleteCluase = (req, res, next) => {};
